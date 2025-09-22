@@ -1,6 +1,6 @@
 const board = document.getElementById("board");
 const turnText = document.getElementById("turn");
-let turn = "red"; 
+let turn = "red";
 let selectedPiece = null;
 let selectedSquare = null;
 
@@ -29,7 +29,6 @@ function createBoard() {
       square.dataset.col = col;
 
       square.addEventListener("click", () => handleSquareClick(square));
-
       board.appendChild(square);
     }
   }
@@ -52,12 +51,33 @@ function handleSquareClick(square) {
     selectedPiece = piece;
     selectedSquare = square;
     piece.classList.add("selected");
+
   } else if (!piece && selectedPiece) {
-    square.appendChild(selectedPiece);
-    selectedPiece.classList.remove("selected");
-    selectedPiece = null;
-    selectedSquare = null;
-    switchTurn();
+    if (isValidMove(selectedSquare, square, selectedPiece)) {
+      square.appendChild(selectedPiece);
+      selectedPiece.classList.remove("selected");
+      selectedPiece = null;
+      selectedSquare = null;
+      switchTurn();
+    }
+  }
+}
+
+function isValidMove(fromSquare, toSquare, piece) {
+  const fromRow = parseInt(fromSquare.dataset.row);
+  const fromCol = parseInt(fromSquare.dataset.col);
+  const toRow = parseInt(toSquare.dataset.row);
+  const toCol = parseInt(toSquare.dataset.col);
+
+  const rowDiff = toRow - fromRow;
+  const colDiff = Math.abs(toCol - fromCol);
+
+  if (colDiff !== 1) return false;
+
+  if (piece.dataset.color === "red") {
+    return rowDiff === -1;
+  } else {
+    return rowDiff === 1; 
   }
 }
 
@@ -67,4 +87,3 @@ function switchTurn() {
 }
 
 createBoard();
-
